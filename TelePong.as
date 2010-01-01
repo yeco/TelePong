@@ -145,8 +145,10 @@ package {
         }
         
         private function setPaddleBlur(blur:Number):void {
+            
             paddleFilters[0].blurX = blur;
             paddle.filters = paddleFilters;
+            
         }
         
         private function enterFrameHandler(event:Event):void {
