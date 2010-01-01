@@ -14,22 +14,13 @@ package {
     import flash.text.*;
     
     [SWF(width = "465", height = "465", frameRate = "50", backgroundColor="0x000000")]
+    
     public class TelePong extends Sprite {
         
         private var isGameOver:Boolean;
         private var gameOverCount:int;
         
-        // Weight to prevent the re-start would not see the score remain
-        private const GAME_OVER_WAIT:int = 50;
         
-        private const SCREEN_W:int = 465;
-        private const SCREEN_H:int = 465;
-        
-        private const PADDLE_OFFSET:Number = 25;
-        private var PADDLE_XS:Array = [ PADDLE_OFFSET, SCREEN_W - PADDLE_OFFSET ];
-        
-        private const PADDLE_HX:int = 7;
-        private const PADDLE_HY:int = 50;
         
         // Coordinates of the center of the paddle
         private var paddleX:Number = PADDLE_XS[side];
@@ -54,9 +45,9 @@ package {
         
         private var score:int;
         
-        private var gameOverText:TextField;
-        private var scoreText:TextField;
-        private var instructionText:TextField;
+        private var gameOverTxt:TextField;
+        private var scoreTxt:TextField;
+        private var instructionTxt:TextField;
         
         // I can't see the motion blur to brighten dark
         private var rLum:Number = 40;
@@ -71,8 +62,21 @@ package {
             rLum, gLum, bLum, 0, 0,
             0, 0, 0, 1, 0]
         );
+        
         private var glowFilter:GlowFilter = new GlowFilter(0x2ADC00, 1, 8, 8);
         private var paddleFilters:Array = [ new BlurFilter(0, 0, 2), colorMatrixFilter, glowFilter ];
+        
+        // Weight to prevent the re-start would not see the score remain
+        private const GAME_OVER_WAIT:int = 50;
+        
+        private const SCREEN_W:int = 465;
+        private const SCREEN_H:int = 465;
+        
+        private const PADDLE_OFFSET:Number = 25;
+        private var PADDLE_XS:Array = [ PADDLE_OFFSET, SCREEN_W - PADDLE_OFFSET ];
+        
+        private const PADDLE_HX:int = 7;
+        private const PADDLE_HY:int = 50;
         
         public function TelePong() {
             function createText(x:Number, y:Number, fontSize:Number):TextField {
@@ -84,20 +88,20 @@ package {
                 return tf;
             }
             
-            gameOverText = createText(180, 150, 20);
-            gameOverText.text = "GAME OVER :P";
-            gameOverText.autoSize = TextFieldAutoSize.CENTER;
-            gameOverText.visible = isGameOver;
-            addChild(gameOverText);
+            gameOverTxt = createText(180, 150, 20);
+            gameOverTxt.text = "GAME OVER :P";
+            gameOverTxt.autoSize = TextFieldAutoSize.CENTER;
+            gameOverTxt.visible = isGameOver;
+            addChild(gameOverTxt);
             
-            scoreText = createText(155, 20, 60);
-            scoreText.autoSize = TextFieldAutoSize.RIGHT;
-            addChild(scoreText);
+            scoreTxt = createText(155, 20, 60);
+            scoreTxt.autoSize = TextFieldAutoSize.RIGHT;
+            addChild(scoreTxt);
             
-            instructionText = createText(280, 180, 23);
-            instructionText.text = "CLICK TO TELEPORT!";
-            instructionText.autoSize = TextFieldAutoSize.RIGHT;
-            addChild(instructionText);
+            instructionTxt = createText(280, 180, 23);
+            instructionTxt.text = "CLICK TO TELEPORT!";
+            instructionTxt.autoSize = TextFieldAutoSize.RIGHT;
+            addChild(instructionTxt);
             
             var g:Graphics = paddle.graphics;
             g.beginFill(0x2ADC00);
@@ -120,16 +124,16 @@ package {
             //ball.filters = [ glowFilter ]; // Not really sure about the blur on the ball
             addChild(ball);
             
-            initGame();
+            startGame();
             
             addEventListener(Event.ENTER_FRAME, enterFrameHandler);
             stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
         }
         
-        public function initGame():void {
-            ballSpeed = 10;
+        public function startGame():void {
+            ballSpeed = 10; //Increase difficulty
             score = 0;
-            scoreText.text = "0";
+            scoreTxt.text = "0";
             
             side = 0;
             paddleX = PADDLE_XS[side];
@@ -144,10 +148,12 @@ package {
             isGameOver = false;
         }
         
+        
         private function setPaddleBlur(blur:Number):void {
             paddleFilters[0].blurX = blur;
             paddle.filters = paddleFilters;
         }
+        
         
         private function enterFrameHandler(event:Event):void {
             if (teleporting) {
@@ -179,7 +185,7 @@ package {
                             ballVY = clamp(ballVY, -ballSpeed, ballSpeed);
                             
                             score = clamp(score + 1, 0, 9999);
-                            scoreText.text = String(score);
+                            scoreTxt.text = String(score);
                         }
                     }
                 }
@@ -201,17 +207,17 @@ package {
             ball.x = ballX;
             ball.y = ballY;
             
-            gameOverText.visible = isGameOver && (gameOverCount > GAME_OVER_WAIT);
+            gameOverTxt.visible = isGameOver && (gameOverCount > GAME_OVER_WAIT);
         }
         
         private function mouseDownHandler(MouseEvent:Event):void {
             side = 1 - side;
             teleporting = true;
             
-            if (gameOverText.visible) {
-                initGame();
+            if (gameOverTxt.visible) {
+                startGame();
             }
-            instructionText.visible = false;
+            instructionTxt.visible = false;
         }
         
         private function random(n:Number, m:Number):Number {
