@@ -127,7 +127,7 @@ package {
         }
         
         public function initGame():void {
-            ballSpeed = 10; //Increase difficulty
+            ballSpeed = 5; //Increase difficulty
             score = 0;
             scoreText.text = "0";
             
@@ -182,6 +182,8 @@ package {
                             
                             score = clamp(score + 1, 0, 9999);
                             scoreText.text = String(score);
+                            
+                            ballSpeed = ballSpeed + 0.5; // increase difficulty progressively
                         }
                     }
                 }
