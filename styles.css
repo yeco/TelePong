@@ -1,0 +1,18 @@
+html,
+body {
+    background-color: #4e4e4e;
+    font-family: 'Share Tech Mono', monospace;
+    color: rgb(104, 194, 1);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    height: 100%;
+}
+
+h1 {}
+
+#container {
+    margin: auto;
+    width: 450px;
+    height: 450px;
+}
